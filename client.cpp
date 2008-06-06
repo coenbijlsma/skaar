@@ -25,6 +25,16 @@ client::client(char* u_name, char* u_nick, char* u_password, char* u_host, int u
 
 client::~client(){}
 
+int client::register_ui(virtualui* vui){
+    if(ui == 0){
+	ui = vui;
+	return 0;
+    }else{
+	fprintf(stderr, "client::register_ui --> UI already set.\n");
+	return 1;
+    }
+}
+
 //PRIV
 int client::read_config(){
 	FILE *fp = fopen(CLIENT_CONF, "r");
@@ -106,7 +116,13 @@ void client::start_work(){
 	while(conn->connected() == 1){
 	    char* sline = conn->read_message();
 	    smsg = message::to_message(sline, this);
-	    printf("%s",smsg->to_string(RFC_1459));
+	    
+	    // Print the message to the alternate ui, if it's set
+	    if(ui != 0){
+		ui->print_msg(smsg->to_string(RFC_1459));
+	    }else{
+		printf("%s",smsg->to_string(RFC_1459));
+	    }
 	}
     }else if(pid < 0){
 	perror("fork");
@@ -137,7 +153,12 @@ void client::start_work(){
 		if(is_command(line) == 1){
 		    // handle the command
 		}else{
-		    fprintf(stderr, "Invalid message: %s\n", line);
+		    // Print the message to the alternate ui, if it's set
+		    if(ui != 0){
+			ui->print_err("Invalid message: ", line);
+		    }else{
+			fprintf(stderr, "Invalid message: %s\n", line);
+		    }
 		}
 	    }else{    
 		send_message(msg);	
@@ -183,7 +204,12 @@ int client::connect(){
 	strcat(pm, password);
 	message* pmessage = message::to_message(pm, this);
 	if(send_message(pmessage) != 0){
-		fprintf(stderr, "ERROR: Sending PASS message failed!\n");
+		// Print the message to the alternate ui, if it's set
+		if(ui != 0){
+		    ui->print_err("ERROR: Sending PASS message failed!\n", "");
+		}else{
+		    fprintf(stderr, "ERROR: Sending PASS message failed!\n");
+		}
 		return 1;
 	}
 
@@ -192,7 +218,11 @@ int client::connect(){
 	strcat(nm, nick);
 	message* nmessage = message::to_message(nm, this);
 	if(send_message(nmessage) != 0){
-		fprintf(stderr, "ERROR: Sending NICK message failed!\n");
+		if(ui != 0){
+		    ui->print_err("ERROR: Sending NICK message failed!\n", "");
+		}else{
+		    fprintf(stderr, "ERROR: Sending NICK message failed!\n");
+		}
 		return 1;
 	}
 
@@ -205,7 +235,11 @@ int client::connect(){
 	strcat(um, user_name);
 	message* umessage = message::to_message(um, this);
 	if(send_message(umessage) != 0){
+	    if(ui != 0){
+		ui->print_err("ERROR: Sending USER message failed!\n", "");
+	    }else{
 		fprintf(stderr, "ERROR: Sending USER message failed!\n");
+	    }
 		return 1;
 	}
 	
@@ -219,7 +253,12 @@ int client::connect(){
 		strcat(jm, "\r\n");
 		conn->send_message(jm);
 	    }else{
-		fprintf(stderr, "No channels to join!\n");
+		if(ui != 0){
+		    ui->print_err("No channels to join!\n", "");
+		}else{
+		    fprintf(stderr, "No channels to join!\n");
+		}
+		return  1;
 	    }
 	}
 	return 0;

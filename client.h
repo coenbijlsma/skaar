@@ -9,6 +9,7 @@
 #include <string.h>
 #include <unistd.h>
 
+#include "virtualui.h" // to print the messages
 #include "client_conn.h" // to connect to the server
 #include "messages/message.h" // to send messages to the server
 
@@ -30,6 +31,9 @@ class client{
     int auto_connect;
     int ajoin;
     
+    // Needed to print messages
+    virtualui* ui;    
+    
     // Reads the file client.conf
     int read_config();
 	
@@ -39,27 +43,33 @@ class client{
 public:
     client(char* u_name, char* u_nick, char* u_password, char* u_host, int u_port, int auto_conn);
     virtual ~client();
+    
+    /*
+    */
+    int register_ui(virtualui* vui);
+    
     int send_message(message* msg);
 
-	/*
-	 * Connects this client to the desired channel. This basically means that 
-	 * the following three commands are sent to the server:
-	 * - USER
-	 * - NICK
-	 * - PASS
-	*/
-	int connect();
+    /*
+     * Connects this client to the desired channel. This basically means that 
+     * the following three commands are sent to the server:
+     * - USER
+     * - NICK
+     * - PASS
+    */
+    int connect();
 
-	void start_work();
-	char* get_nick();
-	char* get_pnick();
-	int is_command(char* line);
+    void start_work();
+    char* get_nick();
+    char* get_pnick();
+    int is_command(char* line);
 	
-	/*
-	 * THIS METHOD DOES NOT CAUSE A NICKCHANGE!
-	 * Changes the nick of the client internally.
-	*/
-	int change_nick(char* new_nick);
+    /*
+     * THIS METHOD DOES NOT CAUSE A NICKCHANGE!
+     * Changes the nick of the client internally.
+    */
+    int change_nick(char* new_nick);
+    
 };
 
 #endif

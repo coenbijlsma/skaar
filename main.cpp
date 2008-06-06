@@ -1,9 +1,12 @@
 #include "client.h"
+#include "exampleui.cpp"
 
 void display_help(void);
 
 int main(int argc, char **argv){
     client* cl = 0;
+    exampleui ui;
+    
     //printf("%d\n", argc);
     
     if(argc == 1){
@@ -18,6 +21,8 @@ int main(int argc, char **argv){
 	display_help();
 	return 1;
     }
+    
+    cl->register_ui(&ui);
     
     cl->start_work();
     //message::to_message("Blaat");
