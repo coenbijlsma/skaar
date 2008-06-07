@@ -1,19 +1,37 @@
 #ifndef EXAMPLEUI_H
 #define EXAMPLEUI_H
 
-#include <stdio.h>
+//#include <stdio.h>
+#include <ncurses.h>
 #include "virtualui.h"
 
 class exampleui : public virtualui {
 
 public:
+    
+    exampleui(){
+	initscr();
+	cbreak();
+    }
+    
+    ~exampleui(){
+	endwin();
+    }
+    
     int print_msg(char* msg){
-	printf(msg);
+	//printf(msg);
+	printw(msg);
+	refresh();
+	return 0;
     }
     
     int print_err(char* error, char* msg){
-	fprintf(stderr, error);
-	fprintf(stderr, msg);
+	printw(error);
+	printw(msg);
+	refresh();
+	//fprintf(stderr, error);
+	//fprintf(stderr, msg);
+	return 0;
     }
 };
 
