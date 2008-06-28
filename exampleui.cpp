@@ -3,6 +3,7 @@
 
 //#include <stdio.h>
 #include <ncurses.h>
+#include <string.h>
 #include "virtualui.h"
 
 class exampleui : public virtualui {
@@ -12,6 +13,7 @@ public:
     exampleui(){
 	initscr();
 	cbreak();
+	noecho();
     }
     
     ~exampleui(){

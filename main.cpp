@@ -5,7 +5,7 @@ void display_help(void);
 
 int main(int argc, char **argv){
     client* cl = 0;
-    exampleui ui;
+    //exampleui ui;
     
     //printf("%d\n", argc);
     
@@ -22,7 +22,7 @@ int main(int argc, char **argv){
 	return 1;
     }
     
-    cl->register_ui(&ui);
+    //cl->register_ui(&ui);
     
     cl->start_work();
     //message::to_message("Blaat");

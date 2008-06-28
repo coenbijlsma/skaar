@@ -1,3 +1,6 @@
+
+all: client
+
 client: stringtokenizer.o client_conn.o message.o pass_message.o nick_message.o user_message.o oper_message.o quit_message.o join_message.o mode_message.o privmsg_message.o client.o ui.o main.o
 	g++ -lncurses stringtokenizer.o client_conn.o message.o pass_message.o nick_message.o user_message.o oper_message.o quit_message.o join_message.o mode_message.o privmsg_message.o client.o main.o -o client
 
@@ -46,3 +49,5 @@ main.o: main.cpp
 clean: 
 	rm *.o
 	rm client
+
+.PHONY: all clean
